@@ -1,0 +1,3 @@
+[submodule "maps/f1tenth_maps"]
+	path = maps/f1tenth_maps
+	url = https://github.com/kza59/f1tenth_maps.git
