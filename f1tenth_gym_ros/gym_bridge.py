@@ -227,11 +227,19 @@ class GymBridge(Node):
             self.ego_steer = 0.0
 
     def drive_timer_callback(self):
-        if self.ego_drive_published and not self.has_opp:
+        if not self.ego_drive_published:
+            return
+
+        if not self.has_opp:
             self.obs, _, self.done, _ = self.env.step(np.array([[self.ego_steer, self.ego_requested_speed]]))
-        elif self.ego_drive_published and self.has_opp and self.opp_drive_published:
-            self.obs, _, self.done, _ = self.env.step(np.array([[self.ego_steer, self.ego_requested_speed], [self.opp_steer, self.opp_requested_speed]]))
+        else:
+            # always step both agents; use last known values for opponent
+            self.obs, _, self.done, _ = self.env.step(np.array([
+                [self.ego_steer, self.ego_requested_speed],
+                [self.opp_steer, self.opp_requested_speed]
+            ]))
         self._update_sim_state()
+
 
     def timer_callback(self):
         ts = self.get_clock().now().to_msg()
